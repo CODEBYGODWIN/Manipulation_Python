@@ -11,4 +11,5 @@ plt.xlabel("bedrooms")
 plt.ylabel("bathrooms")
 plt.grid(True)
 
+
 plt.savefig("scatter_plot.png")
