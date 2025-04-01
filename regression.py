@@ -1,24 +1,64 @@
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+import pandas as pd
+import matplotlib.pyplot as plt
 
-df = pd.read_csv("kc_house_data.csv")
+def linear_regression(X, y):
+    model = LinearRegression()
+    model.fit(X, y)
+    return model
 
-X = df.drop(columns=['price', 'id', 'date'])
-y = df['price']
+def predict(model, X):
+    return model.predict(X)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+def score(model, X, y):
+    return model.score(X, y)
 
-reg = LinearRegression()
-reg.fit(X_train, y_train)
+def plot_regression(X, y, model):
+    plt.figure(figsize=(10, 5))
+    
+    
+    plt.scatter(X, y, alpha=0.5, label="Données réelles")
+    
+    
+    plt.plot(X, model.predict(X), color='red', label="Régression linéaire")
+    
+    plt.xlabel("Surface habitable (sqft)")
+    plt.ylabel("Prix des maisons")
+    plt.title("Régression linéaire simple")
+    plt.legend()
+    plt.savefig("regression.png")
 
-y_pred = reg.predict(X_test)
 
-mse = mean_squared_error(y_test, y_pred)
-rmse = np.sqrt(mse)
-mae = mean_absolute_error(y_test, y_pred)
+def main():
+    try:
+        df = pd.read_csv("kc_house_data.csv")
+        
+       
+        if 'sqft_living' not in df.columns or 'price' not in df.columns:
+            raise KeyError("Les colonnes nécessaires ne sont pas dans le fichier CSV.")
+        
+       
+        df = df.dropna(subset=['sqft_living', 'price'])
 
-print(f"RMSE : {rmse}")
-print(f"MAE : {mae}")
+        
+        X = df[['sqft_living']]
+        y = df['price']
+
+        
+        model = linear_regression(X, y)
+
+        
+        print(f"Score R² du modèle : {score(model, X, y):.4f}")
+
+        
+        plot_regression(X, y, model)
+
+    except FileNotFoundError:
+        print("Erreur : Le fichier 'kc_house_data.csv' est introuvable.")
+    except KeyError as e:
+        print(f"Erreur : {e}")
+    except Exception as e:
+        print(f"Une erreur s'est produite : {e}")
+
+if __name__ == "__main__":
+    main()
