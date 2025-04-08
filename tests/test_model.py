@@ -11,7 +11,7 @@ def sample_data():
     y = 2 * X['feature1'] + 3 * X['feature2']
     return X, y
 
-def test_train_output_shape(sample_data):
+def test_train(sample_data):
     X, y = sample_data
     model = Model()
     X_test = model.train(X, y)
@@ -19,7 +19,7 @@ def test_train_output_shape(sample_data):
     assert X_test.shape[1] == X.shape[1]
     assert len(model.y_test) == X_test.shape[0]
 
-def test_predict_output(sample_data):
+def test_predict(sample_data):
     X, y = sample_data
     model = Model()
     model.train(X, y)
@@ -28,7 +28,7 @@ def test_predict_output(sample_data):
     assert len(y_pred) == len(model.X_test)
     assert isinstance(y_pred, (list, pd.Series)) or hasattr(y_pred, '__len__')
 
-def test_evaluate_runs_without_exception(sample_data):
+def test_evaluate(sample_data):
     X, y = sample_data
     model = Model()
     model.train(X, y)
