@@ -1,47 +1,40 @@
-import pytest
 import pandas as pd
-import numpy as np
-from src.model import HousePriceModel
-import os
+import pytest
+from src.model import Model
 
-def test_model_init():
-    """Test l'initialisation du modèle."""
-    model = HousePriceModel()
-    assert hasattr(model, 'model')
+@pytest.fixture
+def sample_data():
+    data_size = 100
+    feature1 = pd.Series([i / data_size for i in range(data_size)])
+    feature2 = pd.Series([1 - (i / data_size) for i in range(data_size)])
+    X = pd.DataFrame({'feature1': feature1, 'feature2': feature2})
+    y = 2 * X['feature1'] + 3 * X['feature2']
+    return X, y
 
-def test_model_train_predict():
-    """Test l'entraînement et la prédiction du modèle."""
-    # Création de données de test
-    X = pd.DataFrame({'sqft_living': [1000, 2000, 3000]})
-    y = pd.Series([100000, 200000, 300000])
-    
-    # Entraînement du modèle
-    model = HousePriceModel()
+def test_train_output_shape(sample_data):
+    X, y = sample_data
+    model = Model()
+    X_test = model.train(X, y)
+
+    assert X_test.shape[1] == X.shape[1]
+    assert len(model.y_test) == X_test.shape[0]
+
+def test_predict_output(sample_data):
+    X, y = sample_data
+    model = Model()
     model.train(X, y)
-    
-    # Test des prédictions
-    predictions = model.predict(X)
-    assert len(predictions) == 3
-    
-    # Test du score
-    score = model.score(X, y)
-    assert 0 <= score <= 1
+    y_pred = model.predict(model.X_test)
 
-def test_model_plot():
-    """Test la génération du graphique."""
-    # Création de données de test
-    X = pd.DataFrame({'sqft_living': [1000, 2000, 3000]})
-    y = pd.Series([100000, 200000, 300000])
-    
-    # Test du plot
-    model = HousePriceModel()
+    assert len(y_pred) == len(model.X_test)
+    assert isinstance(y_pred, (list, pd.Series)) or hasattr(y_pred, '__len__')
+
+def test_evaluate_runs_without_exception(sample_data):
+    X, y = sample_data
+    model = Model()
     model.train(X, y)
-    
-    test_plot = "test_regression.png"
-    model.plot_regression(X, y, save_path=test_plot)
-    
-    # Vérifie que le fichier a été créé
-    assert os.path.exists(test_plot)
-    
-    # Nettoyage
-    os.remove(test_plot)
+    y_pred = model.predict(model.X_test)
+
+    try:
+        model.evaluate(y_pred)
+    except Exception as e:
+        pytest.fail(f"La méthode evaluate a levé une exception : {e}")
