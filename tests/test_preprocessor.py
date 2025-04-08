@@ -29,5 +29,7 @@ def test_transform(sample_df):
 
 def test_fit_transform(sample_df):
     prep = Preprocessor()
+    X, y = prep.transform(sample_df)
     X, y = prep.fit_transform(sample_df)
     assert X.shape[0] == y.shape[0]
+    
