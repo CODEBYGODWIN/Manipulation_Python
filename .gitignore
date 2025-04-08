@@ -1,5 +1,5 @@
-/tests/__pycache__
-/tests/__init__.py
-/src/__pycache__
-/src/__init__.py
-/data/kc_house_data.csv
+./tests/__pycache__
+./tests/__init__.py
+./src/__pycache__
+./src/__init__.py
+./data/kc_house_data.csv
