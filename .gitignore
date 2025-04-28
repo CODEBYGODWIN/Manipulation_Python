@@ -3,3 +3,4 @@ src/__pycache__
 data/kc_house_data.csv
 enonce_guide_pour_rapport_boite_a_outil.pdf
 Chinook_Sqlite.sqlite
+data/your_report.html
